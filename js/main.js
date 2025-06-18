@@ -16,7 +16,7 @@ function displayBookmark(itemIndex){
                   </button>
                 </td>
                 <td>
-                  <button class="btn btn-danger pe-2" onclick="deleteSite(${itemIndex})">
+                  <button class="btn btn-danger pe-2" onclick="openDeleteDialog(${itemIndex})">
                     <i class="fa-solid fa-trash-can"></i>
                     Delete
                   </button>
@@ -38,6 +38,43 @@ function deleteSite(index){
     bookmarks.splice(index, 1);
     localStorage.setItem("bookmarksList", JSON.stringify(bookmarks));
     displayAllBookmarks();
+}
+function openDeleteDialog(index) {
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: "btn btn-success m-2",
+            cancelButton: "btn btn-danger m-2"
+        },
+        buttonsStyling: false
+    });
+    swalWithBootstrapButtons.fire({
+        title: "Are you sure to delete this Bookmark?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+            deleteSite(index)
+            swalWithBootstrapButtons.fire({
+                title: "Deleted!",
+                text: "Your Bookmark has been deleted.",
+                icon: "success"
+            });
+        } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+        ) {
+            swalWithBootstrapButtons.fire({
+                title: "Cancelled",
+                text: "Your Bookmark is safe :)",
+                icon: "error"
+            });
+        }
+    });
 }
 function displayAllBookmarks(){
     tableContent.innerHTML=""
